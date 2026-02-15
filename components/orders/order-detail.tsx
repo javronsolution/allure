@@ -135,32 +135,11 @@ export function OrderDetail({
     }
   };
 
-  // Generate WhatsApp message
-  const generateWhatsAppMessage = (forTailor = false) => {
-    const items = orderItems
-      .map(
-        (item, i) =>
-          `${i + 1}. ${GARMENT_TYPE_LABELS[item.garment_type as GarmentType]} - ${
-            item.description || "No description"
-          }`
-      )
-      .join("\n");
-
-    if (forTailor) {
-      return encodeURIComponent(
-        `Order: ${order.order_number}\nCustomer: ${order.customer.full_name}\nDelivery: ${format(parseISO(order.delivery_date), "dd MMM yyyy")}\n\nItems:\n${items}\n\nPlease check the attached PDF for measurements and details.`
-      );
-    }
-
-    return encodeURIComponent(
-      `Hello ${order.customer.full_name},\n\nYour order ${order.order_number} has been confirmed.\n\nItems:\n${items}\n\nDelivery Date: ${format(parseISO(order.delivery_date), "dd MMM yyyy")}\nTotal: ₹${order.total_amount.toLocaleString("en-IN")}\nAdvance Paid: ₹${order.advance_paid.toLocaleString("en-IN")}\nBalance: ₹${balance.toLocaleString("en-IN")}\n\nThank you!`
-    );
-  };
-
-  const customerPhone = order.customer.phone.replace(/[^0-9]/g, "");
 
   return (
     <div className="space-y-6">
+      {/* Order Header & Customer - side by side on tablet */}
+      <div className="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
       {/* Order Header */}
       <Card>
         <CardContent className="pt-4 space-y-4">
@@ -233,6 +212,7 @@ export function OrderDetail({
           </Link>
         </CardContent>
       </Card>
+      </div> {/* end side-by-side grid */}
 
       {/* Order Items */}
       {orderItems.map((item, index) => (
@@ -269,7 +249,7 @@ export function OrderDetail({
                   <Label className="text-xs text-muted-foreground">
                     Measurements
                   </Label>
-                  <div className="grid grid-cols-2 gap-y-1 gap-x-4 mt-1">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-y-1 gap-x-4 mt-1">
                     {Object.entries(
                       item.measurements as Record<string, number | string>
                     ).map(([key, value]) => {
@@ -425,28 +405,6 @@ export function OrderDetail({
           settings={settings}
         />
 
-        <div className="grid grid-cols-2 gap-3">
-          <Button asChild variant="outline" className="text-green-700">
-            <a
-              href={`https://wa.me/${customerPhone}?text=${generateWhatsAppMessage()}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <MessageCircle className="w-4 h-4 mr-1" />
-              Customer
-            </a>
-          </Button>
-          <Button asChild variant="outline" className="text-green-700">
-            <a
-              href={`https://wa.me/?text=${generateWhatsAppMessage(true)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <MessageCircle className="w-4 h-4 mr-1" />
-              Tailor
-            </a>
-          </Button>
-        </div>
 
         <Separator />
 
@@ -481,7 +439,7 @@ function DesignImageThumbnail({ image }: { image: DesignImage }) {
       }
       target="_blank"
       rel="noopener noreferrer"
-      className="block w-20 h-20 rounded-lg overflow-hidden border"
+      className="block w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border"
     >
       <img
         src={data.publicUrl}

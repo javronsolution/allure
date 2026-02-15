@@ -136,7 +136,7 @@ export function CustomerForm({ customer }: CustomerFormProps) {
         <CardHeader>
           <CardTitle className="text-base">Personal Information</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 md:grid md:grid-cols-2 md:gap-4 md:space-y-0">
           <div className="space-y-2">
             <Label htmlFor="full_name">
               Full Name <span className="text-destructive">*</span>
@@ -175,7 +175,7 @@ export function CustomerForm({ customer }: CustomerFormProps) {
               placeholder="email@example.com"
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
             <Label htmlFor="address">Address</Label>
             <Textarea
               id="address"
@@ -198,7 +198,7 @@ export function CustomerForm({ customer }: CustomerFormProps) {
           </p>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {CORE_MEASUREMENTS.map((field) => (
               <div key={field.key} className="space-y-1">
                 <Label htmlFor={field.key} className="text-sm">

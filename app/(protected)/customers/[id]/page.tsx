@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
+import { PageWrapper } from "@/components/layout/PageWrapper";
 
 export default async function CustomerDetailPage({
   params,
@@ -33,7 +34,7 @@ export default async function CustomerDetailPage({
 
   return (
     <>
-      <Header
+      <PageWrapper
         title={customer.full_name}
         showBack
         actions={
@@ -44,10 +45,9 @@ export default async function CustomerDetailPage({
             </Link>
           </Button>
         }
-      />
-      <main className="px-4 py-4 max-w-lg mx-auto">
+      >
         <CustomerDetail customer={customer} orders={orders ?? []} />
-      </main>
+      </PageWrapper>
     </>
   );
 }

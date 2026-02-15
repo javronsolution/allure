@@ -4,6 +4,7 @@ import { OrderList } from "@/components/orders/order-list";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { PageWrapper } from "@/components/layout/PageWrapper";
 
 export default async function OrdersPage() {
   const supabase = await createClient();
@@ -15,20 +16,19 @@ export default async function OrdersPage() {
 
   return (
     <>
-      <Header
+      <PageWrapper
         title="Orders"
         actions={
-          <Button asChild size="sm">
+          <Button asChild>
             <Link href="/orders/new">
               <Plus className="w-4 h-4 mr-1" />
               New
             </Link>
           </Button>
         }
-      />
-      <main className="px-4 py-4 max-w-lg mx-auto">
+      >
         <OrderList orders={orders ?? []} />
-      </main>
+      </PageWrapper>
     </>
   );
 }

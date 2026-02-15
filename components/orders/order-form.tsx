@@ -26,6 +26,7 @@ import {
 import { Customer, GarmentType } from "@/lib/types/database";
 import { v4 as uuidv4 } from "uuid";
 import imageCompression from "browser-image-compression";
+import Link from "next/link";
 
 interface OrderItemFormData {
   tempId: string;
@@ -342,12 +343,12 @@ export function OrderForm({ customers, preselectedCustomer }: OrderFormProps) {
                 {filteredCustomers.length === 0 && (
                   <p className="text-sm text-muted-foreground text-center py-4">
                     No customers found.{" "}
-                    <a
+                    <Link
                       href="/customers/new"
                       className="text-primary underline"
                     >
                       Add new customer
-                    </a>
+                    </Link>
                   </p>
                 )}
               </div>
@@ -418,7 +419,7 @@ export function OrderForm({ customers, preselectedCustomer }: OrderFormProps) {
               {/* Garment-specific measurements */}
               <div className="space-y-2">
                 <Label className="text-sm">Measurements</Label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {/* Core measurements */}
                   {CORE_MEASUREMENTS.map((field) => (
                     <div key={field.key} className="space-y-1">
@@ -493,7 +494,7 @@ export function OrderForm({ customers, preselectedCustomer }: OrderFormProps) {
                   {item.imagePreviews.map((preview, imgIdx) => (
                     <div
                       key={imgIdx}
-                      className="relative w-20 h-20 rounded-lg overflow-hidden border"
+                      className="relative w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border"
                     >
                       <img
                         src={preview}
@@ -509,7 +510,7 @@ export function OrderForm({ customers, preselectedCustomer }: OrderFormProps) {
                       </button>
                     </div>
                   ))}
-                  <label className="w-20 h-20 rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer hover:bg-accent transition-colors">
+                  <label className="w-20 h-20 md:w-24 md:h-24 rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer hover:bg-accent transition-colors">
                     <ImagePlus className="w-5 h-5 text-muted-foreground" />
                     <span className="text-xs text-muted-foreground mt-1">
                       Add

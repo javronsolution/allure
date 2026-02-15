@@ -22,8 +22,8 @@ export function Header({ title, showBack = false, actions }: HeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-      <div className="flex items-center justify-between h-14 px-4 max-w-lg mx-auto">
+    <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 border-b">
+      <div className="flex items-center justify-between h-14 px-4 max-w-lg md:max-w-2xl mx-auto">
         <div className="flex items-center gap-2">
           {showBack && (
             <Button

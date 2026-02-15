@@ -47,7 +47,7 @@ export function CustomerList({ customers }: CustomerListProps) {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2 md:grid md:grid-cols-2 md:gap-3 md:space-y-0">
           {filtered.map((customer) => (
             <Link key={customer.id} href={`/customers/${customer.id}`}>
               <Card className="hover:bg-accent/50 transition-colors">

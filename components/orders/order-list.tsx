@@ -97,7 +97,7 @@ export function OrderList({ orders }: OrderListProps) {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2 md:grid md:grid-cols-2 md:gap-3 md:space-y-0">
           {filtered.map((order) => {
             const statusConfig = ORDER_STATUS_CONFIG[order.status];
             const balance = order.total_amount - order.advance_paid;

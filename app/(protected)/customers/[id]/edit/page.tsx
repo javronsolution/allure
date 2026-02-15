@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Header } from "@/components/layout/header";
 import { CustomerForm } from "@/components/customers/customer-form";
 import { notFound } from "next/navigation";
+import { PageWrapper } from "@/components/layout/PageWrapper";
 
 export default async function EditCustomerPage({
   params,
@@ -23,10 +24,9 @@ export default async function EditCustomerPage({
 
   return (
     <>
-      <Header title="Edit Customer" showBack />
-      <main className="px-4 py-4 max-w-lg mx-auto">
-        <CustomerForm customer={customer} />
-      </main>
+     <PageWrapper title={"Edit Customer"} showBack>
+         <CustomerForm customer={customer} />
+     </PageWrapper>
     </>
   );
 }

@@ -140,6 +140,8 @@ export function SettingsForm({ settings }: SettingsFormProps) {
 
   return (
     <div className="space-y-6">
+      {/* Boutique Profile & Preferences - side by side on tablet */}
+      <div className="space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
       {/* Boutique Profile */}
       <Card>
         <CardHeader>
@@ -238,6 +240,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
           </div>
         </CardContent>
       </Card>
+      </div> {/* end side-by-side grid */}
 
       {/* PDF Settings */}
       <Card>

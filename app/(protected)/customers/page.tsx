@@ -1,9 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
-import { Header } from "@/components/layout/header";
 import { CustomerList } from "@/components/customers/customer-list";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { PageWrapper } from "@/components/layout/PageWrapper";
 
 export default async function CustomersPage() {
   const supabase = await createClient();
@@ -15,20 +15,19 @@ export default async function CustomersPage() {
 
   return (
     <>
-      <Header
+      <PageWrapper
         title="Customers"
         actions={
-          <Button asChild size="sm">
+          <Button asChild>
             <Link href="/customers/new">
               <Plus className="w-4 h-4 mr-1" />
               Add
             </Link>
           </Button>
         }
-      />
-      <main className="px-4 py-4 max-w-lg mx-auto">
+      >
         <CustomerList customers={customers ?? []} />
-      </main>
+      </PageWrapper>
     </>
   );
 }

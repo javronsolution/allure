@@ -47,9 +47,8 @@ export function DashboardContent({
 }: DashboardContentProps) {
   return (
     <div className="space-y-6">
-      {/* Quick Actions */}
-      <div className="grid grid-cols-2 gap-3">
-        <Button asChild className="h-auto py-4 flex-col gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+         <Button asChild className="h-auto py-4 flex-col gap-2">
           <Link href="/orders/new">
             <Plus className="w-5 h-5" />
             <span>New Order</span>
@@ -61,11 +60,7 @@ export function DashboardContent({
             <span>New Customer</span>
           </Link>
         </Button>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-3">
-        <Card>
+        <Card className="col-span-2 md:col-span-1">
           <CardContent className="pt-4 pb-4">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-blue-100">
@@ -78,7 +73,7 @@ export function DashboardContent({
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="col-span-2 md:col-span-1">
           <CardContent className="pt-4 pb-4">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-green-100">

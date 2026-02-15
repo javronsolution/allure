@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Header } from "@/components/layout/header";
 import { OrderForm } from "@/components/orders/order-form";
+import { PageWrapper } from "@/components/layout/PageWrapper";
 
 export default async function NewOrderPage({
   searchParams,
@@ -29,13 +30,12 @@ export default async function NewOrderPage({
 
   return (
     <>
-      <Header title="New Order" showBack />
-      <main className="px-4 py-4 max-w-lg mx-auto">
+      <PageWrapper title="New Order" showBack>
         <OrderForm
           customers={customers ?? []}
           preselectedCustomer={preselectedCustomer}
         />
-      </main>
+      </PageWrapper>
     </>
   );
 }

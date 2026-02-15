@@ -5,10 +5,5 @@ export default function ProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="min-h-screen pb-20">
-      {children}
-      <BottomNav />
-    </div>
-  );
+  return <BottomNav>{children}</BottomNav>;
 }

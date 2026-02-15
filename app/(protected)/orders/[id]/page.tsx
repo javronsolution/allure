@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
-import { Header } from "@/components/layout/header";
 import { OrderDetail } from "@/components/orders/order-detail";
 import { notFound } from "next/navigation";
+import { PageWrapper } from "@/components/layout/PageWrapper";
 
 export default async function OrderDetailPage({
   params,
@@ -37,14 +37,13 @@ export default async function OrderDetailPage({
 
   return (
     <>
-      <Header title={order.order_number} showBack />
-      <main className="px-4 py-4 max-w-lg mx-auto">
+      <PageWrapper title={order.order_number} showBack>
         <OrderDetail
           order={order}
           orderItems={orderItems ?? []}
           settings={settings}
         />
-      </main>
+      </PageWrapper>
     </>
   );
 }

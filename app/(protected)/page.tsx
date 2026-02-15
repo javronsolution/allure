@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Header } from "@/components/layout/header";
 import { DashboardContent } from "@/components/dashboard/dashboard-content";
+import { PageWrapper } from "@/components/layout/PageWrapper";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -62,8 +63,9 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <Header title="Dashboard" />
-      <main className="px-4 py-4 max-w-lg mx-auto space-y-6">
+      {/* <Header title="Dashboard" /> */}
+    
+       <PageWrapper>
         <DashboardContent
           overdueOrders={overdueOrders ?? []}
           todayOrders={todayOrders ?? []}
@@ -72,7 +74,7 @@ export default async function DashboardPage() {
           pendingCount={pendingCount ?? 0}
           totalBalance={totalBalance}
         />
-      </main>
+       </PageWrapper>
     </>
   );
 }

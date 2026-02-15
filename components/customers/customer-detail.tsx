@@ -20,6 +20,7 @@ export function CustomerDetail({ customer, orders }: CustomerDetailProps) {
 
   return (
     <div className="space-y-6">
+      <div className="space-y-6">
       {/* Contact Info */}
       <Card>
         <CardContent className="pt-4 space-y-3">
@@ -86,7 +87,7 @@ export function CustomerDetail({ customer, orders }: CustomerDetailProps) {
           <CardTitle className="text-base">Body Measurements</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-y-3 gap-x-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-4">
             {CORE_MEASUREMENTS.map((field) => {
               const value = customer[field.key as keyof Customer];
               return (
@@ -101,6 +102,7 @@ export function CustomerDetail({ customer, orders }: CustomerDetailProps) {
           </div>
         </CardContent>
       </Card>
+      </div> 
 
       {/* Notes */}
       {customer.notes && (
