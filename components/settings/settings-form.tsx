@@ -17,8 +17,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Save, Download, LogOut } from "lucide-react";
+import { Save, Download, LogOut, Bell, BellOff, BellRing } from "lucide-react";
 import { BoutiqueSettings } from "@/lib/types/database";
+import {
+  subscribeToPush,
+  unsubscribeFromPush,
+  isPushSubscribed,
+  isPushSupported,
+  sendTestNotification,
+} from "@/components/pwa/sw-register";
 
 interface SettingsFormProps {
   settings: BoutiqueSettings | null;
@@ -28,6 +35,21 @@ export function SettingsForm({ settings }: SettingsFormProps) {
   const router = useRouter();
   const supabase = createClient();
   const [loading, setLoading] = useState(false);
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [pushLoading, setPushLoading] = useState(false);
+  const [pushSupported, setPushSupported] = useState(false);
+  const [testSending, setTestSending] = useState(false);
+
+  // Check push notification status on mount
+  useState(() => {
+    if (typeof window !== "undefined") {
+      const supported = isPushSupported();
+      setPushSupported(supported);
+      if (supported) {
+        isPushSubscribed().then(setPushEnabled);
+      }
+    }
+  });
 
   const [formData, setFormData] = useState({
     boutique_name: settings?.boutique_name ?? "Allure Boutique",
@@ -274,6 +296,83 @@ export function SettingsForm({ settings }: SettingsFormProps) {
         <Save className="w-4 h-4 mr-2" />
         {loading ? "Saving..." : "Save Settings"}
       </Button>
+
+      <Separator />
+
+      {/* Push Notifications */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Push Notifications</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            {pushSupported
+              ? "Receive push notifications on this device"
+              : "Push notifications are not supported in this browser"}
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Button
+            variant={pushEnabled ? "outline" : "default"}
+            onClick={async () => {
+              setPushLoading(true);
+              try {
+                if (pushEnabled) {
+                  await unsubscribeFromPush();
+                  setPushEnabled(false);
+                  toast.success("Notifications disabled");
+                } else {
+                  const sub = await subscribeToPush();
+                  if (sub) {
+                    setPushEnabled(true);
+                    toast.success("Notifications enabled!");
+                  } else {
+                    toast.error(
+                      "Permission denied. Please allow notifications in your browser settings."
+                    );
+                  }
+                }
+              } catch {
+                toast.error("Failed to update notification settings");
+              }
+              setPushLoading(false);
+            }}
+            disabled={!pushSupported || pushLoading}
+            className="w-full"
+          >
+            {pushEnabled ? (
+              <>
+                <BellOff className="w-4 h-4 mr-2" />
+                {pushLoading ? "Disabling..." : "Disable Notifications"}
+              </>
+            ) : (
+              <>
+                <Bell className="w-4 h-4 mr-2" />
+                {pushLoading ? "Enabling..." : "Enable Notifications"}
+              </>
+            )}
+          </Button>
+          {pushEnabled && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                setTestSending(true);
+                const ok = await sendTestNotification();
+                if (ok) {
+                  toast.success("Test notification sent!");
+                } else {
+                  toast.error("Failed to send test notification");
+                }
+                setTestSending(false);
+              }}
+              disabled={testSending}
+              className="w-full"
+            >
+              <BellRing className="w-4 h-4 mr-2" />
+              {testSending ? "Sending..." : "Send Test Notification"}
+            </Button>
+          )}
+        </CardContent>
+      </Card>
 
       <Separator />
 
