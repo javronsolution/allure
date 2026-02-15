@@ -1,24 +1,47 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, Phone, Users } from "lucide-react";
 import { Customer } from "@/lib/types/database";
+import { PaginationControls } from "@/components/ui/pagination-controls";
 
 interface CustomerListProps {
   customers: Customer[];
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  pageSize: number;
+  searchQuery: string;
 }
 
-export function CustomerList({ customers }: CustomerListProps) {
-  const [search, setSearch] = useState("");
+export function CustomerList({
+  customers,
+  currentPage,
+  totalPages,
+  totalCount,
+  pageSize,
+  searchQuery,
+}: CustomerListProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [search, setSearch] = useState(searchQuery);
 
-  const filtered = customers.filter(
-    (c) =>
-      c.full_name.toLowerCase().includes(search.toLowerCase()) ||
-      c.phone.includes(search)
-  );
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    const params = new URLSearchParams(searchParams.toString());
+    if (value.trim()) {
+      params.set("q", value.trim());
+    } else {
+      params.delete("q");
+    }
+    params.delete("page"); // reset to page 1 on new search
+    const qs = params.toString();
+    router.push(qs ? `/customers?${qs}` : "/customers");
+  };
 
   return (
     <div className="space-y-4">
@@ -27,20 +50,20 @@ export function CustomerList({ customers }: CustomerListProps) {
         <Input
           placeholder="Search by name or phone..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => handleSearch(e.target.value)}
           className="pl-10"
         />
       </div>
 
-      {filtered.length === 0 ? (
+      {customers.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <Users className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
             <h3 className="font-semibold text-lg mb-2">
-              {search ? "No customers found" : "No customers yet"}
+              {searchQuery ? "No customers found" : "No customers yet"}
             </h3>
             <p className="text-muted-foreground text-sm">
-              {search
+              {searchQuery
                 ? "Try a different search term"
                 : "Add your first customer to get started"}
             </p>
@@ -48,7 +71,7 @@ export function CustomerList({ customers }: CustomerListProps) {
         </Card>
       ) : (
         <div className="space-y-2 md:grid md:grid-cols-2 md:gap-3 md:space-y-0">
-          {filtered.map((customer) => (
+          {customers.map((customer) => (
             <Link key={customer.id} href={`/customers/${customer.id}`}>
               <Card className="hover:bg-accent/50 transition-colors">
                 <CardContent className="py-3 px-4">
@@ -77,9 +100,13 @@ export function CustomerList({ customers }: CustomerListProps) {
         </div>
       )}
 
-      <p className="text-xs text-muted-foreground text-center">
-        {filtered.length} of {customers.length} customers
-      </p>
+      <PaginationControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalCount={totalCount}
+        pageSize={pageSize}
+        basePath="/customers"
+      />
     </div>
   );
 }

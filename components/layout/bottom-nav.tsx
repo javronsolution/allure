@@ -61,7 +61,7 @@ export function BottomNav({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Tablet+: Sidebar */}
-      <div className="hidden md:flex z-50">
+      <div className="hidden md:flex z-50 min-h-screen">
         <aside className="w-80 flex-col border-r bg-background">
           <div className="flex items-center justify-center gap-2 px-5 border-b h-14">
             <Logo />
@@ -92,7 +92,7 @@ export function BottomNav({ children }: { children: React.ReactNode }) {
         </aside>
        <div className="flex-1">
         <div className="h-14 border-b"></div>
-        <div>
+        <div className="flex-1">
              {children}
         </div>
        </div>

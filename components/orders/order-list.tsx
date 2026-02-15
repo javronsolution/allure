@@ -1,15 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, ClipboardList, Filter } from "lucide-react";
+import { Search, ClipboardList } from "lucide-react";
 import { ORDER_STATUS_CONFIG, ORDER_STATUS_FLOW } from "@/lib/constants";
 import { OrderStatus } from "@/lib/types/database";
 import { format, parseISO, isPast, isToday } from "date-fns";
+import { PaginationControls } from "@/components/ui/pagination-controls";
 
 interface OrderWithCustomer {
   id: string;
@@ -27,20 +29,49 @@ interface OrderWithCustomer {
 
 interface OrderListProps {
   orders: OrderWithCustomer[];
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  pageSize: number;
+  searchQuery: string;
+  statusFilter: string;
 }
 
-export function OrderList({ orders }: OrderListProps) {
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<OrderStatus | "all">("all");
+export function OrderList({
+  orders,
+  currentPage,
+  totalPages,
+  totalCount,
+  pageSize,
+  searchQuery,
+  statusFilter: initialStatusFilter,
+}: OrderListProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [search, setSearch] = useState(searchQuery);
 
-  const filtered = orders.filter((order) => {
-    const matchesSearch =
-      order.order_number.toLowerCase().includes(search.toLowerCase()) ||
-      order.customer.full_name.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || order.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const navigate = (updates: Record<string, string | null>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === null || value === "") {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
+    });
+    params.delete("page"); // reset to page 1
+    const qs = params.toString();
+    router.push(qs ? `/orders?${qs}` : "/orders");
+  };
+
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    navigate({ q: value.trim() || null });
+  };
+
+  const handleStatusFilter = (status: string) => {
+    navigate({ status: status === "all" ? null : status });
+  };
 
   return (
     <div className="space-y-4">
@@ -49,7 +80,7 @@ export function OrderList({ orders }: OrderListProps) {
         <Input
           placeholder="Search by order # or customer..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => handleSearch(e.target.value)}
           className="pl-10"
         />
       </div>
@@ -57,9 +88,9 @@ export function OrderList({ orders }: OrderListProps) {
       {/* Status Filter */}
       <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
         <Button
-          variant={statusFilter === "all" ? "default" : "outline"}
+          variant={initialStatusFilter === "all" ? "default" : "outline"}
           size="sm"
-          onClick={() => setStatusFilter("all")}
+          onClick={() => handleStatusFilter("all")}
           className="shrink-0"
         >
           All
@@ -69,9 +100,9 @@ export function OrderList({ orders }: OrderListProps) {
           return (
             <Button
               key={status}
-              variant={statusFilter === status ? "default" : "outline"}
+              variant={initialStatusFilter === status ? "default" : "outline"}
               size="sm"
-              onClick={() => setStatusFilter(status)}
+              onClick={() => handleStatusFilter(status)}
               className="shrink-0"
             >
               {config.label}
@@ -80,17 +111,17 @@ export function OrderList({ orders }: OrderListProps) {
         })}
       </div>
 
-      {filtered.length === 0 ? (
+      {orders.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <ClipboardList className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
             <h3 className="font-semibold text-lg mb-2">
-              {search || statusFilter !== "all"
+              {searchQuery || initialStatusFilter !== "all"
                 ? "No orders found"
                 : "No orders yet"}
             </h3>
             <p className="text-muted-foreground text-sm">
-              {search || statusFilter !== "all"
+              {searchQuery || initialStatusFilter !== "all"
                 ? "Try a different filter"
                 : "Create your first order to get started"}
             </p>
@@ -98,7 +129,7 @@ export function OrderList({ orders }: OrderListProps) {
         </Card>
       ) : (
         <div className="space-y-2 md:grid md:grid-cols-2 md:gap-3 md:space-y-0">
-          {filtered.map((order) => {
+          {orders.map((order) => {
             const statusConfig = ORDER_STATUS_CONFIG[order.status];
             const balance = order.total_amount - order.advance_paid;
             const deliveryDate = parseISO(order.delivery_date);
@@ -169,9 +200,13 @@ export function OrderList({ orders }: OrderListProps) {
         </div>
       )}
 
-      <p className="text-xs text-muted-foreground text-center">
-        {filtered.length} of {orders.length} orders
-      </p>
+      <PaginationControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalCount={totalCount}
+        pageSize={pageSize}
+        basePath="/orders"
+      />
     </div>
   );
 }

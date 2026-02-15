@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Save, Download } from "lucide-react";
+import { Save, Download, LogOut } from "lucide-react";
 import { BoutiqueSettings } from "@/lib/types/database";
 
 interface SettingsFormProps {
@@ -296,6 +296,22 @@ export function SettingsForm({ settings }: SettingsFormProps) {
           </Button>
         </CardContent>
       </Card>
+
+      <Separator />
+
+      {/* Logout */}
+      <Button
+        variant="destructive"
+        className="w-full"
+        onClick={async () => {
+          await supabase.auth.signOut();
+          router.push("/login");
+          router.refresh();
+        }}
+      >
+        <LogOut className="w-4 h-4 mr-2" />
+        Logout
+      </Button>
     </div>
   );
 }
